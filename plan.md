@@ -10,7 +10,7 @@ Cập nhật: 12/10/2026.
 4. Triển khai phạm vi đã duyệt.
 5. Cập nhật kết quả thực hiện và kiểm tra vào file này.
 
-**Trạng thái hiện tại: Website đã chạy và xuất bản demo riêng tư; đang đưa mã nguồn lên GitHub theo yêu cầu bổ sung.**
+**Trạng thái hiện tại: Website và backend đã hoàn thành, demo đã live; mã nguồn đã đưa lên GitHub riêng tư.**
 Người dùng xác nhận "Duyệt" ngày 12/10/2026. Mã nguồn nằm trong `timtro-ueh/`. Server local chạy tại http://127.0.0.1:5173/. Sites đã có bản live version 1 tại https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site.
 
 ## Mục tiêu
@@ -74,7 +74,7 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - [x] Triển khai quản trị và dữ liệu mẫu.
 - [x] Kiểm tra tìm kiếm, chi phí, yêu thích, đánh giá, liên hệ và quyền truy cập.
 - [x] Kiểm tra giao diện responsive và bản build.
-- [ ] Xuất bản demo riêng tư, bàn giao và cập nhật kết quả.
+- [x] Xuất bản demo riêng tư, bàn giao và cập nhật kết quả.
 
 ## Kiểm tra và bàn giao
 
@@ -115,4 +115,7 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Người dùng yêu cầu đưa mã nguồn lên repo `timtroueh` và xác nhận tạo repo riêng tư trong tài khoản `Schizophren-ia`.
 - GitHub connector đang kết nối tài khoản khác; dùng phiên GitHub có sẵn trên máy cho đúng tài khoản đã chọn. Token chỉ dùng trong bộ nhớ, không lưu vào nguồn hoặc log.
 - Đã chuẩn bị ZIP mã nguồn sạch trong `timtro-ueh/outputs/timtroueh-source.zip`.
-- Đang tạo repo và đẩy nguồn; chưa ghi nhận hoàn tất trước khi xác minh commit trên GitHub.
+- Đã tạo repo riêng tư https://github.com/Schizophren-ia/timtroueh và đẩy toàn bộ nguồn lên nhánh `main`.
+- Đã xác minh GitHub API trả commit `1c1b3219bc4db85337b69c7e1afb8e6d5ac970d1`, khớp nguồn local. Commit cập nhật kết quả bàn giao sẽ nằm sau commit này.
+- Đã kiểm tra danh sách tracked: không có `.dev.vars`, `.env*`, `node_modules`, `.wrangler`, `outputs` hay `.sites-runtime`.
+- README, schema/migration, API, giao diện, tài nguyên ảnh, test và `plan.md` được đưa lên repo; hướng dẫn chạy có trong README.
