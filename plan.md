@@ -127,3 +127,12 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Đã chuyển Sites từ `custom` sang `public`, revision 2; không thay đổi quyền quản trị của ứng dụng.
 - Kiểm tra HTTP không gửi cookie/token: `/` và `/api/rooms` trả 200, không chuyển tới đăng nhập; `/api/session` trả `user: null`; `/api/admin/users` trả 401.
 - Mọi người có thể xem/tìm phòng tại https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site. Yêu thích, gửi đánh giá/liên hệ và quản trị vẫn cần đăng nhập.
+
+### Sửa GitHub Actions / GitHub Pages — 12/10/2026
+
+- Người dùng báo build thất bại và duyệt hướng sửa workflow đúng Vinext, giữ backend tại demo Sites, dùng GitHub Pages chuyển hướng tới demo public.
+- Đã đọc workflow mới do người dùng thêm ở commit `1cf4c69` và cập nhật local bằng fast-forward, giữ lịch sử repo.
+- Nguyên nhân: workflow Next.js mặc định dùng Node 20, chạy `npx next build` và `configure-pages` với `static_site_generator: next`, không phù hợp dự án ES Module/Vinext/Node >=22.13.
+- Đã thay workflow bằng Node 24, kiểm tra TypeScript/backend và `npm run build`; tách bước deploy Pages, không chèn cấu hình Next.js.
+- Bản build đầy đủ được lưu thành artifact Worker; Pages chỉ xuất bản trang chuyển hướng từ `pages/index.html` tới demo public. Có fallback link khi trình duyệt không tự chuyển hướng.
+- Đang kiểm tra và theo dõi kết quả GitHub Actions; chưa ghi nhận run mới thành công trước khi GitHub xác nhận.

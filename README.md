@@ -97,3 +97,11 @@ npm run test:browser
 | POST `/api/uploads` | Multipart `file`: JPG/PNG/WebP/MP4, tối đa 8MB |
 
 Khi đổi schema, chạy `npm run db:generate`, kiểm tra migration mới rồi áp dụng local. Sites áp dụng migration production khi deploy. Giữ nguyên migration đã áp dụng. Không commit `.dev.vars`, `.wrangler`, `.sites-runtime`, token hay dữ liệu runtime.
+
+## Build trên GitHub Actions và GitHub Pages
+
+Workflow `.github/workflows/nextjs.yml` dùng Node 24, `npm ci`, kiểm tra TypeScript/backend và `npm run build` (Vinext). Bản build Worker đầy đủ được lưu thành artifact `timtroueh-worker-build`.
+
+GitHub Pages chỉ xuất bản trang chuyển hướng trong `pages/index.html` tới demo public https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site/. Backend và database vẫn chạy tại demo Sites. Không dùng mẫu `npx next build` hoặc chèn `static_site_generator: next` vào bước kiểm tra/build ứng dụng này.
+
+Workflow chạy khi thay đổi mã nguồn trên `main` hoặc bấm **Run workflow**. Các commit chỉ cập nhật `plan.md`/README không kích hoạt lại quá trình build. Khi cần xem lỗi hoặc tải artifact, mở tab **Actions** của repo.
