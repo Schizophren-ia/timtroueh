@@ -1,0 +1,99 @@
+﻿# TìmTrọ UEH
+
+Website mô phỏng tìm trọ cho sinh viên, theo các ảnh `7.png`–`20.png` và cấu trúc thông tin của [Nhà trọ Online UEH](https://nhatroueh.com/).
+
+## Tính năng
+
+- Trang chủ xanh–trắng, responsive; dùng hình phòng từ ảnh tham chiếu qua CSS crop.
+- Tìm phòng đơn/ở ghép theo trường, campus, khu vực, giá, khoảng cách, từ khóa, trạng thái còn phòng và số lớp xác thực; sắp xếp giá/khoảng cách/đánh giá.
+- Chi tiết phòng, ảnh phóng to, tiện nghi, bảng chi phí tháng có thể tùy chỉnh điện/nước, tiền cọc riêng.
+- Bản đồ OpenStreetMap, liên kết chỉ đường, trạng thái xác thực từng lớp, thư viện ảnh; hỗ trợ ảnh toàn cảnh kéo ngang và video MP4 khi được bổ sung.
+- Đăng nhập bằng ChatGPT, hồ sơ, yêu thích, đánh giá có duyệt, checklist, yêu cầu liên hệ và thông báo theo tài khoản.
+- Chủ trọ quản lý phòng được gán; quản trị quản lý phòng, ảnh, tài khoản, xác thực, đánh giá và phản hồi liên hệ.
+- SQL/D1 lưu dữ liệu, R2 lưu ảnh/video tải lên; kiểm tra quyền phía server, truy vấn có tham số và kiểm tra dữ liệu bằng Zod.
+
+## Dữ liệu mẫu và nguồn
+
+Ứng dụng có 12 phòng mẫu. Ba phòng chính có giá/diện tích/trạng thái xác thực theo ảnh:
+
+| Phòng | Tiền thuê | Diện tích | Tổng tháng mẫu | Xác thực |
+| --- | --- | --- | --- | --- |
+| DEMO-Q10-001 | 2.800.000đ | 20m² | 3.200.000đ | 3/3 |
+| DEMO-Q10-002 | 3.200.000đ | 26m² | 3.570.000đ | 3/3 |
+| DEMO-Q10-003 | 2.500.000đ | 28m² | 2.900.000đ | 2/3 |
+
+Ảnh phòng 3 có bảng phí cộng thành 2.850.000đ nhưng tổng hiển thị 2.900.000đ. Dữ liệu mẫu điều chỉnh phí dịch vụ thành 150.000đ để tổng tính toán khớp 2.900.000đ. Chi phí đều hiển thị riêng và có thể sửa trong trang quản trị.
+
+Đánh giá, chủ trọ, vị trí và xác thực là dữ liệu mô phỏng. Các nhận xét mẫu tạo lại từ tình huống trong ảnh; không phải lời xác nhận từ người thuê thật. Không có số liên hệ thật hoặc tài liệu CCCD. Ảnh 360°/video không được giả lập từ ảnh thường: chỉ hiển thị khi quản trị thêm tệp tương ứng. Gửi yêu cầu liên hệ chỉ lưu trong hệ thống; không gửi ra Zalo hay email. Link gọi điện/Zalo chỉ xuất hiện khi phòng có số điện thoại được cấu hình.
+
+Nguồn cấu trúc và nội dung tham khảo: [Thông tin trọ](https://nhatroueh.com/thong-tin-tro/), [Hướng dẫn](https://nhatroueh.com/huong-dan/) và [Trang chủ](https://nhatroueh.com/). Các tọa độ/địa chỉ trong ứng dụng là vị trí tham khảo cho bản mô phỏng; khoảng cách mẫu không phải dữ liệu định tuyến giao thông.
+
+## Chạy trên máy
+
+Yêu cầu Node.js >=22.13.0; khuyến nghị Node 24. Git chỉ cần khi xuất bản bằng Sites. Không cần cài SQLite riêng.
+
+```powershell
+cd 'D:\nhà trọ ueh\timtro-ueh'
+npm ci --include=dev --include=optional
+Copy-Item .dev.vars.example .dev.vars
+npm run build
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_absent_lord_tyger.sql
+npm run dev
+```
+
+Mở http://127.0.0.1:5173/. Áp dụng migration một lần với database mới; không chạy lại SQL đã áp dụng. Dữ liệu mẫu tự tạo khi API truy cập database lần đầu; local và production có database riêng.
+
+Nếu shim `npm.cmd` trên Windows báo không tìm thấy `npm-prefix.js`, thay `npm` bằng entrypoint Node trực tiếp:
+
+```powershell
+node 'C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js' run dev
+```
+
+Mở `/signin-with-chatgpt?return_to=/account` để dùng tài khoản local `seedy@sites.test`. Với `.dev.vars` như trên, tài khoản này có quyền quản trị. Auth mô phỏng chỉ chạy loopback trong dev; build production không có mock auth. Các header danh tính do nền tảng Sites cung cấp được dùng để nhận diện người dùng.
+
+Ở production, cấu hình biến runtime `ADMIN_EMAIL` trong Sites cho email chủ sở hữu trước lần đăng nhập đầu tiên. Không đưa email cấu hình hay token vào mã nguồn. Người dùng khác mặc định là sinh viên; quản trị có thể cấp vai trò chủ trọ/quản trị trong `/manage`. Tài khoản xuất hiện sau lần đăng nhập đầu tiên. Khi sửa phòng, quản trị gán tài khoản quản lý phòng để chủ trọ đó nhận yêu cầu và có quyền chỉnh sửa.
+
+## Kiểm tra
+
+```powershell
+npm run typecheck
+npm test
+npm run build
+# Khi dev server đang chạy và máy có Google Chrome:
+npm run test:browser
+```
+
+`npm test` chạy backend thật với một adapter SQLite trong bộ nhớ: lọc/sắp xếp, chi phí, danh tính, dữ liệu riêng, CSRF, quyền quản trị/chủ trọ, CRUD phòng, bản nháp, kiểm duyệt đánh giá, phản hồi và thông báo. Không thay đổi database ứng dụng.
+
+`test:browser` chạy Playwright với Google Chrome tại `C:/Program Files/Google/Chrome/Application/chrome.exe`. Điều chỉnh `executablePath` nếu máy dùng vị trí khác. Kiểm tra này dùng database local và có thể tạo yêu cầu/phản hồi thử. Kết quả và screenshot nằm trong `outputs/` (không commit).
+
+## Cấu trúc mã nguồn
+
+- `components/timtro.tsx`: giao diện và các luồng sinh viên.
+- `components/management.tsx`: quản lý phòng, tệp, người dùng và duyệt/phản hồi.
+- `app/globals.css`: desktop/mobile và hiệu ứng.
+- `app/api/[...path]/route.ts`: kết nối danh tính Sites, D1/R2 với API.
+- `lib/server.ts`: validation, quyền truy cập và thao tác dữ liệu.
+- `lib/types.ts`, `lib/seed.ts`: kiểu dữ liệu, campus, công thức chi phí, fixtures.
+- `db/schema.ts`, `drizzle/`: schema và migration.
+- `.openai/hosting.json`: Site ID và binding `DB`/`BUCKET`.
+
+## API chính
+
+| Endpoint | Chức năng |
+| --- | --- |
+| GET `/api/health` | Kiểm tra database/API |
+| GET `/api/session` | Danh tính và vai trò hiện tại |
+| PATCH `/api/profile` | Cập nhật hồ sơ của mình |
+| GET/POST `/api/rooms` | Tìm phòng / tạo phòng theo quyền |
+| GET/PATCH/DELETE `/api/rooms/:id` | Xem / sửa / chuyển phòng thành bản nháp |
+| GET/POST `/api/rooms/:id/reviews` | Đánh giá đã đăng / gửi đánh giá chờ duyệt |
+| POST/DELETE `/api/favorites/:roomId` | Lưu / bỏ lưu phòng |
+| GET/POST `/api/inquiries` | Yêu cầu riêng / gửi yêu cầu |
+| PATCH `/api/inquiries/:id` | Chủ trọ có quyền hoặc admin phản hồi |
+| GET/PATCH `/api/notifications` | Thông báo riêng / đánh dấu đã đọc |
+| GET/PATCH `/api/admin/users/:id` | Danh sách ở `/users`; sửa vai trò ở `/users/:id` |
+| GET/PATCH `/api/admin/reviews/:id` | Chờ duyệt ở `/reviews`; duyệt ở `/reviews/:id` |
+| POST `/api/uploads` | Multipart `file`: JPG/PNG/WebP/MP4, tối đa 8MB |
+
+Khi đổi schema, chạy `npm run db:generate`, kiểm tra migration mới rồi áp dụng local. Sites áp dụng migration production khi deploy. Giữ nguyên migration đã áp dụng. Không commit `.dev.vars`, `.wrangler`, `.sites-runtime`, token hay dữ liệu runtime.
