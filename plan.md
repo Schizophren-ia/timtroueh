@@ -11,7 +11,7 @@ Cập nhật: 12/10/2026.
 5. Cập nhật kết quả thực hiện và kiểm tra vào file này.
 
 **Trạng thái hiện tại: Website và backend đã hoàn thành, demo đã live; mã nguồn đã đưa lên GitHub riêng tư.**
-Người dùng xác nhận "Duyệt" ngày 12/10/2026. Mã nguồn nằm trong `timtro-ueh/`. Server local chạy tại http://127.0.0.1:5173/. Sites đã có bản live version 1 tại https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site.
+Người dùng xác nhận "Duyệt" ngày 12/10/2026. Mã nguồn nằm trong `timtro-ueh/`. Local đã được kiểm tra tại http://127.0.0.1:5173/; server test đã dừng sau bàn giao, có thể chạy lại theo README. Sites có bản live version 1 tại https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site.
 
 ## Mục tiêu
 
@@ -100,6 +100,7 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Kiểm tra Chrome/Playwright: trang chủ và kết quả có 3 phòng chính; xem chi tiết và đổi chi phí; phân biệt xác thực 3/3 và 2/3; xem thêm đánh giá; đăng nhập quản trị; lưu/bỏ yêu thích; gửi liên hệ và phản hồi trong quản trị.
 - `outputs/browser-report.json`: không có lỗi JavaScript; trang chủ ở viewport 390px không tràn ngang. Đã lưu screenshot desktop/mobile trong `timtro-ueh/outputs/`.
 - `outputs/browser-extra-report.json`: tạo/sửa phòng qua giao diện, tải/đọc ảnh từ R2 local, duyệt đánh giá qua giao diện đều đã qua; 9 route ở viewport 390px không tràn ngang, không có lỗi JavaScript.
+- Backend trên demo đã xuất bản cũng được kiểm tra trực tiếp: `/api/health` trả 200 và database D1; `/api/rooms` với bộ lọc 3 phòng chính trả 200, tổng 3 phòng. Dùng quyền truy cập riêng tư của Sites trong bộ nhớ; không đưa token vào log hoặc mã nguồn.
 
 ### Đóng gói và xuất bản
 
