@@ -136,3 +136,13 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Đã thay workflow bằng Node 24, kiểm tra TypeScript/backend và `npm run build`; tách bước deploy Pages, không chèn cấu hình Next.js.
 - Bản build đầy đủ được lưu thành artifact Worker; Pages chỉ xuất bản trang chuyển hướng từ `pages/index.html` tới demo public. Có fallback link khi trình duyệt không tự chuyển hướng.
 - Đang kiểm tra và theo dõi kết quả GitHub Actions; chưa ghi nhận run mới thành công trước khi GitHub xác nhận.
+
+#### Kết quả sửa workflow đã xác minh
+
+- Commit sửa: `48ed13ffc11b089840134d30105c324a53f580be`.
+- Kiểm tra local: TypeScript qua, 5/5 kiểm tra backend qua; YAML workflow phân tích hợp lệ bằng js-yaml; `git diff --check` không lỗi.
+- GitHub Actions run https://github.com/Schizophren-ia/timtroueh/actions/runs/38227338755: cả job `build` và `deploy` đã hoàn tất thành công. Các bước Node 24, dependency, typecheck, test backend, build Vinext, artifact và deploy Pages đều thành công.
+- Link GitHub Pages: https://schizophren-ia.github.io/timtroueh/ — đã kiểm tra HTTP 200.
+- Kiểm tra Chrome không đăng nhập: link Pages tự chuyển đến demo public, trang chủ hiển thị 3 phòng chính. Backend tiếp tục chạy trên Sites.
+- README đã giải thích cách chạy workflow và vai trò của GitHub Pages; các cập nhật chỉ thay đổi tài liệu không kích hoạt lại CI.
+- Trạng thái: đã sửa, build/deploy và luồng mở website từ GitHub đều đã xác minh thành công.
