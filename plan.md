@@ -120,3 +120,10 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Đã xác minh GitHub API trả commit `1c1b3219bc4db85337b69c7e1afb8e6d5ac970d1`, khớp nguồn local. Commit cập nhật kết quả bàn giao sẽ nằm sau commit này.
 - Đã kiểm tra danh sách tracked: không có `.dev.vars`, `.env*`, `node_modules`, `.wrangler`, `outputs` hay `.sites-runtime`.
 - README, schema/migration, API, giao diện, tài nguyên ảnh, test và `plan.md` được đưa lên repo; hướng dẫn chạy có trong README.
+
+### Cập nhật quyền truy cập public — 12/10/2026
+
+- Người dùng xác nhận đã mở public repo GitHub và duyệt mở public website demo.
+- Đã chuyển Sites từ `custom` sang `public`, revision 2; không thay đổi quyền quản trị của ứng dụng.
+- Kiểm tra HTTP không gửi cookie/token: `/` và `/api/rooms` trả 200, không chuyển tới đăng nhập; `/api/session` trả `user: null`; `/api/admin/users` trả 401.
+- Mọi người có thể xem/tìm phòng tại https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site. Yêu thích, gửi đánh giá/liên hệ và quản trị vẫn cần đăng nhập.
