@@ -50,7 +50,7 @@ Nếu shim `npm.cmd` trên Windows báo không tìm thấy `npm-prefix.js`, thay
 node 'C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js' run dev
 ```
 
-Mở `/signin-with-chatgpt?return_to=/account` để dùng tài khoản local `seedy@sites.test`. Với `.dev.vars` như trên, tài khoản này có quyền quản trị. Auth mô phỏng chỉ chạy loopback trong dev; build production không có mock auth. Các header danh tính do nền tảng Sites cung cấp được dùng để nhận diện người dùng.
+Mở `/signin-with-chatgpt?return_to=/account` để dùng tài khoản local `seedy@sites.test`. Với `.dev.vars` như trên, tài khoản này có quyền quản trị. Mô phỏng danh tính ChatGPT chỉ chạy loopback trong dev; production dùng các header danh tính do Sites cung cấp cho quản trị/chủ trọ. OTP sinh viên mô phỏng là tính năng riêng, có trên cả local và demo public.
 
 Ở production, cấu hình biến runtime `ADMIN_EMAIL` trong Sites cho email chủ sở hữu trước lần đăng nhập đầu tiên. Không đưa email cấu hình hay token vào mã nguồn. Tài khoản ChatGPT chưa được cấp vai trò quản lý không được dùng làm phiên sinh viên; quản trị có thể cấp vai trò chủ trọ/quản trị cho tài khoản ChatGPT trong `/manage`. Khi sửa phòng, quản trị gán tài khoản quản lý phòng để chủ trọ đó nhận yêu cầu và có quyền chỉnh sửa. Tài khoản OTP demo luôn chỉ có quyền sinh viên và bị backend chặn cấp quyền quản lý.
 
@@ -72,11 +72,14 @@ npm test
 npm run build
 # Khi dev server đang chạy và máy có Google Chrome:
 npm run test:browser
+node scripts/test-demo-auth-browser.mjs
 ```
 
-`npm test` chạy backend thật với một adapter SQLite trong bộ nhớ: lọc/sắp xếp, chi phí, danh tính, dữ liệu riêng, CSRF, quyền quản trị/chủ trọ, CRUD phòng, bản nháp, kiểm duyệt đánh giá, phản hồi và thông báo. Không thay đổi database ứng dụng.
+`npm test` chạy backend thật với một adapter SQLite trong bộ nhớ: lọc/sắp xếp, chi phí, danh tính, dữ liệu riêng, CSRF, quyền quản trị/chủ trọ, CRUD phòng, bản nháp, kiểm duyệt đánh giá, phản hồi và thông báo; thêm kiểm tra OTP đúng đuôi UEH, hết hạn, dùng lại, giới hạn nhập sai/gửi lại, phiên đăng nhập và chặn nâng quyền demo. Không thay đổi database ứng dụng.
 
 `test:browser` chạy Playwright với Google Chrome tại `C:/Program Files/Google/Chrome/Application/chrome.exe`. Điều chỉnh `executablePath` nếu máy dùng vị trí khác. Kiểm tra này dùng database local và có thể tạo yêu cầu/phản hồi thử. Kết quả và screenshot nằm trong `outputs/` (không commit).
+
+`test-demo-auth-browser.mjs` kiểm tra đăng ký/đăng nhập OTP, email sai đuôi, mã sai, mobile, giữ phiên, yêu thích và đăng xuất. Mặc định chạy local; có thể đặt `TEST_BASE_URL` để kiểm tra bản đã triển khai. Bài kiểm tra tạo một tài khoản mẫu và đợi đủ cooldown 60 giây trước khi đăng nhập lại.
 
 ## Cấu trúc mã nguồn
 

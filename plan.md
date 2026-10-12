@@ -155,4 +155,14 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Backend D1: tài khoản demo tách riêng, mã băm dùng một lần trong 5 phút, chờ gửi lại 60 giây, tối đa 5 lần nhập sai; gửi lại thay mã cũ. Phiên 7 ngày qua cookie HttpOnly, SameSite=Lax, Secure trên HTTPS; đăng xuất thu hồi phiên.
 - Luồng ChatGPT giữ cho chủ trọ/quản trị. OTP demo luôn có quyền sinh viên; backend chặn cấp quyền quản lý. Giao diện ghi rõ xác minh mô phỏng, chưa xác minh quyền sở hữu email; chỉ dùng dữ liệu mẫu.
 - Thêm migration `0001_uneven_lyja.sql` và metadata; áp dụng local thành công. Không cần Resend, API key hay tên miền gửi thư.
-- Kiểm tra: TypeScript và build Vinext thành công; 7/7 kiểm thử backend qua. Kiểm thử Chrome qua toàn bộ đăng ký, mã sai, đăng nhập lại sau cooldown, giữ phiên sau tải lại, yêu thích và đăng xuất; desktop/mobile không tràn ngang hoặc lỗi trình duyệt. Đang đồng bộ GitHub và xuất bản demo.
+- Kiểm tra: TypeScript và build Vinext thành công; 7/7 kiểm thử backend qua. Kiểm thử Chrome qua toàn bộ đăng ký, mã sai, đăng nhập lại sau cooldown, giữ phiên sau tải lại, yêu thích và đăng xuất; desktop/mobile không tràn ngang hoặc lỗi trình duyệt. Mã nguồn đã đẩy lên GitHub và demo đã xuất bản thành công.
+
+#### Kết quả xuất bản OTP mô phỏng
+
+- Commit tính năng: `52521f37decc7d018b5e7d1255b27a7bbf43434a`, repo https://github.com/Schizophren-ia/timtroueh.
+- GitHub Actions https://github.com/Schizophren-ia/timtroueh/actions/runs/38279396887: hoàn tất thành công.
+- Sites version 2, deployment `appgdep_6acd0e6014d4819188a5f07c0213a325` trạng thái `succeeded`; giữ website public.
+- Link đăng ký/đăng nhập: https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site/account.
+- Kiểm thử hồi quy trình duyệt local: tìm trọ, quản trị ChatGPT, liên hệ và phản hồi đều qua; không có lỗi trình duyệt.
+- Kiểm thử Chrome trên demo public: toàn bộ đăng ký/đăng nhập lại, OTP sai, cooldown, cookie phiên, yêu thích và đăng xuất đều qua; không đăng nhập ChatGPT, không có lỗi trình duyệt. Không gửi email thật và không cấu hình dịch vụ email trả phí.
+- Hoàn tất; đã dừng preview local sau kiểm thử.
