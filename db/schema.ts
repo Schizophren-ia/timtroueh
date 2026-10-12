@@ -4,6 +4,17 @@ export const profiles = sqliteTable('profiles', {
   phone: text('phone').notNull().default(''), university: text('university').notNull().default('UEH'),
   campus: text('campus').notNull().default('B'), role: text('role').notNull().default('student'), createdAt: text('created_at').notNull(),
 });
+export const demoAccounts = sqliteTable('demo_accounts', {
+  email: text('email').primaryKey(), userId: text('user_id').notNull().unique().references(() => profiles.id),
+});
+export const demoOtps = sqliteTable('demo_otps', {
+  email: text('email').primaryKey(), challenge: text('challenge').notNull().unique(), codeHash: text('code_hash').notNull(),
+  purpose: text('purpose').notNull(), name: text('name').notNull(), attempts: integer('attempts').notNull().default(0),
+  consumed: integer('consumed').notNull().default(0), expiresAt: integer('expires_at').notNull(), sentAt: integer('sent_at').notNull(),
+});
+export const demoSessions = sqliteTable('demo_sessions', {
+  tokenHash: text('token_hash').primaryKey(), userId: text('user_id').notNull().references(() => profiles.id), expiresAt: integer('expires_at').notNull(),
+});
 export const rooms = sqliteTable('rooms', {
   id: text('id').primaryKey(), code: text('code').notNull().unique(), title: text('title').notNull(),
   price: integer('price').notNull(), type: text('type').notNull(), district: text('district').notNull(),

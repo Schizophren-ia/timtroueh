@@ -146,3 +146,13 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Kiểm tra Chrome không đăng nhập: link Pages tự chuyển đến demo public, trang chủ hiển thị 3 phòng chính. Backend tiếp tục chạy trên Sites.
 - README đã giải thích cách chạy workflow và vai trò của GitHub Pages; các cập nhật chỉ thay đổi tài liệu không kích hoạt lại CI.
 - Trạng thái: đã sửa, build/deploy và luồng mở website từ GitHub đều đã xác minh thành công.
+
+
+### Bổ sung OTP sinh viên UEH mô phỏng — 12/10/2026
+
+- Người dùng chọn OTP mô phỏng hoàn toàn, không gửi mail thật và không dùng dịch vụ trả phí.
+- Thêm đăng ký/đăng nhập tại `/account`, chỉ nhận đúng tên miền `st.ueh.edu.vn`. Hộp thư demo hiển thị OTP 6 số của lượt thao tác hiện tại.
+- Backend D1: tài khoản demo tách riêng, mã băm dùng một lần trong 5 phút, chờ gửi lại 60 giây, tối đa 5 lần nhập sai; gửi lại thay mã cũ. Phiên 7 ngày qua cookie HttpOnly, SameSite=Lax, Secure trên HTTPS; đăng xuất thu hồi phiên.
+- Luồng ChatGPT giữ cho chủ trọ/quản trị. OTP demo luôn có quyền sinh viên; backend chặn cấp quyền quản lý. Giao diện ghi rõ xác minh mô phỏng, chưa xác minh quyền sở hữu email; chỉ dùng dữ liệu mẫu.
+- Thêm migration `0001_uneven_lyja.sql` và metadata; áp dụng local thành công. Không cần Resend, API key hay tên miền gửi thư.
+- Kiểm tra: TypeScript và build Vinext thành công; 7/7 kiểm thử backend qua. Kiểm thử Chrome qua toàn bộ đăng ký, mã sai, đăng nhập lại sau cooldown, giữ phiên sau tải lại, yêu thích và đăng xuất; desktop/mobile không tràn ngang hoặc lỗi trình duyệt. Đang đồng bộ GitHub và xuất bản demo.

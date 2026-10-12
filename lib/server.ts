@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { seedDatabase } from './seed';
+import { getDemoUser, handleDemoAuth } from './demo-auth';
 import { campuses, checklistLabels, type Profile, type Room } from './types';
 
 type Identity = { userId: string; email: string; displayName: string } | null;
@@ -59,9 +60,12 @@ export async function handleApi(request: Request, db: D1Database, identity: Iden
       if (origin && origin !== url.origin) fail(403, 'Nguồn yêu cầu không hợp lệ.');
     }
     await seedDatabase(db);
-    const user = await getProfile(db, identity, options.adminEmail);
+    if (path[0] === 'demo-auth') return await handleDemoAuth(request, db, path[1] || '');
+    const trustedUser = await getProfile(db, identity, options.adminEmail);
+    const demoUser = await getDemoUser(request, db);
+    const user = demoUser ?? (trustedUser && trustedUser.role !== 'student' ? trustedUser : null);
     if (path[0] === 'health' && method === 'GET') return json({ ok: true, database: 'D1', demo: true });
-    if (path[0] === 'session' && method === 'GET') return json({ user });
+    if (path[0] === 'session' && method === 'GET') return json({ user, staffAccessPending: !demoUser && trustedUser?.role === 'student' });
     if (path[0] === 'profile' && method === 'PATCH') {
       const u = requireUser(user);
       const input = await body(request, z.object({ name: str(100), phone: z.string().trim().max(30), university: z.enum(['UEH', 'HCMUT', 'HCMUS']), campus: z.string() }).strict());
@@ -179,6 +183,7 @@ export async function handleApi(request: Request, db: D1Database, identity: Iden
       if (path[1] === 'users' && path[2] && method === 'PATCH') {
         const input = await body(request, z.object({ role: z.enum(['student', 'landlord', 'admin']) }).strict());
         if (path[2] === u.id && input.role !== 'admin') fail(409, 'Không thể tự hạ quyền quản trị.');
+        if (path[2].startsWith('demo:')) fail(403, 'Tài khoản OTP mô phỏng chỉ có quyền sinh viên.');
         const result = await db.prepare('UPDATE profiles SET role=? WHERE id=?').bind(input.role, path[2]).run();
         if (!result.meta.changes) fail(404, 'Tài khoản không tồn tại.'); return json({ ok: true });
       }

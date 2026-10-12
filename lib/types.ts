@@ -1,5 +1,5 @@
 export type Role = 'student' | 'landlord' | 'admin';
-export type Profile = { id: string; email: string; name: string; phone: string; university: string; campus: string; role: Role };
+export type Profile = { id: string; email: string; name: string; phone: string; university: string; campus: string; role: Role; authMode?: 'demo' };
 export type Room = {
   id: string; code: string; title: string; price: number; type: 'single' | 'shared'; district: string;
   status: 'available' | 'full' | 'draft'; ownerId: string | null; area: number; capacity: number;

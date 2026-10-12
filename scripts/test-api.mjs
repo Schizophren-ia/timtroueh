@@ -1,10 +1,10 @@
 ﻿import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { handleApi } from '../outputs/api-under-test.mjs';
 const sqlite = new DatabaseSync(':memory:');
-sqlite.exec(readFileSync('drizzle/0000_absent_lord_tyger.sql', 'utf8'));
+for (const file of readdirSync('drizzle').filter(v => v.endsWith('.sql')).sort()) sqlite.exec(readFileSync('drizzle/' + file, 'utf8'));
 function prepare(sql) {
   let params = [];
   return { bind(...values) { params = values; return this; },
@@ -16,10 +16,22 @@ function prepare(sql) {
 const db = { prepare, async batch(items) { sqlite.exec('BEGIN'); try { const results = []; for (const i of items) results.push(await i.run()); sqlite.exec('COMMIT'); return results; } catch (e) { sqlite.exec('ROLLBACK'); throw e; } } };
 const admin = { userId: 'admin', email: 'admin@test.example', displayName: 'Quản trị' }, student = { userId: 'student', email: 'student@test.example', displayName: 'Sinh viên' }, other = { userId: 'other', email: 'other@test.example', displayName: 'Sinh viên khác' }, landlord = { userId: 'landlord', email: 'landlord@test.example', displayName: 'Chủ trọ' };
 const options = { adminEmail: admin.email };
+const studentCookies = new Map();
 async function call(path, identity = null, method = 'GET', data, headers = {}) {
+  if (identity === student || identity === other) {
+    if (!studentCookies.has(identity.userId)) {
+      const email = identity.userId + '@st.ueh.edu.vn';
+      const otp = await call('demo-auth/request-otp', null, 'POST', { email, purpose: 'register', name: identity.displayName });
+      assert.equal(otp.status, 200);
+      const verified = await call('demo-auth/verify-otp', null, 'POST', { challenge: otp.body.challenge, code: otp.body.demoCode });
+      assert.equal(verified.status, 200);
+      studentCookies.set(identity.userId, verified.cookie.split(';')[0]);
+    }
+    headers = { Cookie: studentCookies.get(identity.userId), ...headers }; identity = null;
+  }
   const request = new Request('http://test.host/api/' + path, { method, headers: { ...(data ? {'Content-Type':'application/json'} : {}), ...headers }, body: data ? JSON.stringify(data) : undefined });
   const response = await handleApi(request, db, identity, options);
-  return { status: response.status, body: await response.json() };
+  return { status: response.status, body: await response.json(), cookie: response.headers.get('set-cookie') };
 }
 let createdRoom, reviewId, inquiryId;
 test('Room fixtures, filters, sort, costs and three verification layers match the references', async () => {
@@ -89,5 +101,55 @@ test('Inquiries persist, stay private and accept replies only from the responsib
   await call('notifications',student,'PATCH'); assert.ok((await call('notifications',student)).body.notifications.every(n=>n.read===1));
   assert.equal((await call('rooms/'+createdRoom.id,landlord,'DELETE')).status,200);
   assert.equal((await call('rooms/'+createdRoom.id)).status,404);
+});
+
+test('Demo OTP validates the exact UEH domain, creates no account before verification and cannot grant staff privileges', async () => {
+  for (const email of ['demo@gmail.com', 'demo@ueh.edu.vn', 'demo@st.ueh.edu.vn.evil.com', 'demo@sub.st.ueh.edu.vn']) {
+    assert.equal((await call('demo-auth/request-otp', null, 'POST', {email,purpose:'register',name:'Demo'})).status,400);
+  }
+  const email='demo-auth@st.ueh.edu.vn';
+  assert.equal((await call('demo-auth/request-otp',null,'POST',{email,purpose:'login'})).status,404);
+  const otp=await call('demo-auth/request-otp',null,'POST',{email:' DEMO-AUTH@ST.UEH.EDU.VN ',purpose:'register',name:'Demo UEH'});
+  assert.equal(otp.status,200);assert.equal(otp.body.demo,true);assert.match(otp.body.demoCode,/^\d{6}$/);
+  assert.equal(sqlite.prepare('SELECT * FROM demo_accounts WHERE email=?').get(email),undefined);
+  assert.notEqual(sqlite.prepare('SELECT code_hash FROM demo_otps WHERE email=?').get(email).code_hash,otp.body.demoCode);
+  assert.equal((await call('demo-auth/request-otp',null,'POST',{email,purpose:'register',name:'Demo'})).status,429);
+  const payload={challenge:otp.body.challenge,code:otp.body.demoCode};
+  const verified=await call('demo-auth/verify-otp',null,'POST',payload);
+  assert.equal(verified.status,200);assert.match(verified.cookie,/HttpOnly/);assert.match(verified.cookie,/SameSite=Lax/);
+  assert.equal((await call('demo-auth/verify-otp',null,'POST',payload)).status,400);
+  const headers={Cookie:verified.cookie.split(';')[0]};
+  const session=await call('session',null,'GET',undefined,headers);
+  assert.equal(session.body.user.email,email);assert.equal(session.body.user.authMode,'demo');assert.equal(session.body.user.role,'student');
+  assert.equal((await call('admin/users',null,'GET',undefined,headers)).status,403);
+  assert.equal((await call('admin/users/'+session.body.user.id,admin,'PATCH',{role:'admin'})).status,403);
+  assert.equal((await call('demo-auth/request-otp',null,'POST',{email,purpose:'register',name:'Demo'})).status,409);
+  assert.equal((await call('session',null,'GET',undefined,{Cookie:'ueh_demo_session='+'a'.repeat(64)})).body.user,null);
+  assert.equal((await call('demo-auth/logout',null,'POST',undefined,headers)).status,200);
+  assert.equal((await call('session',null,'GET',undefined,headers)).body.user,null);
+  sqlite.prepare('UPDATE demo_otps SET sent_at=0 WHERE email=?').run(email);
+  const login=await call('demo-auth/request-otp',null,'POST',{email,purpose:'login'});
+  const loggedIn=await call('demo-auth/verify-otp',null,'POST',{challenge:login.body.challenge,code:login.body.demoCode});
+  assert.equal(loggedIn.status,200);
+  const cookie={Cookie:loggedIn.cookie.split(';')[0]};
+  assert.equal((await call('session',null,'GET',undefined,cookie)).body.user.id,session.body.user.id);
+  sqlite.prepare('UPDATE demo_sessions SET expires_at=0 WHERE user_id=?').run(session.body.user.id);
+  assert.equal((await call('session',null,'GET',undefined,cookie)).body.user,null);
+});
+
+test('Demo OTP rejects expired, incorrect, replayed and superseded codes, and limits attempts', async () => {
+  const email='otp-limits@st.ueh.edu.vn',request={email,purpose:'register',name:'OTP test'};
+  const otp=await call('demo-auth/request-otp',null,'POST',request);
+  const wrong=String((Number(otp.body.demoCode)+1)%1000000).padStart(6,'0');
+  for(let i=0;i<5;i++)assert.equal((await call('demo-auth/verify-otp',null,'POST',{challenge:otp.body.challenge,code:wrong})).status,400);
+  assert.equal((await call('demo-auth/verify-otp',null,'POST',{challenge:otp.body.challenge,code:otp.body.demoCode})).status,400);
+  assert.equal(sqlite.prepare('SELECT * FROM demo_accounts WHERE email=?').get(email),undefined);
+  sqlite.prepare('UPDATE demo_otps SET sent_at=0 WHERE email=?').run(email);
+  const next=await call('demo-auth/request-otp',null,'POST',request);
+  assert.equal((await call('demo-auth/verify-otp',null,'POST',{challenge:otp.body.challenge,code:otp.body.demoCode})).status,400);
+  sqlite.prepare('UPDATE demo_otps SET expires_at=0 WHERE email=?').run(email);
+  assert.equal((await call('demo-auth/verify-otp',null,'POST',{challenge:next.body.challenge,code:next.body.demoCode})).status,400);
+  assert.equal((await call('demo-auth/request-otp',null,'POST',request,{Origin:'https://evil.example'})).status,403);
+  assert.equal((await call('session',{userId:'unapproved-staff',email:'other@example.com',displayName:'Other'})).body.user,null);
 });
 

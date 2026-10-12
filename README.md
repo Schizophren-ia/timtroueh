@@ -8,7 +8,7 @@ Website mô phỏng tìm trọ cho sinh viên, theo các ảnh `7.png`–`20.png
 - Tìm phòng đơn/ở ghép theo trường, campus, khu vực, giá, khoảng cách, từ khóa, trạng thái còn phòng và số lớp xác thực; sắp xếp giá/khoảng cách/đánh giá.
 - Chi tiết phòng, ảnh phóng to, tiện nghi, bảng chi phí tháng có thể tùy chỉnh điện/nước, tiền cọc riêng.
 - Bản đồ OpenStreetMap, liên kết chỉ đường, trạng thái xác thực từng lớp, thư viện ảnh; hỗ trợ ảnh toàn cảnh kéo ngang và video MP4 khi được bổ sung.
-- Đăng nhập bằng ChatGPT, hồ sơ, yêu thích, đánh giá có duyệt, checklist, yêu cầu liên hệ và thông báo theo tài khoản.
+- Sinh viên đăng ký/đăng nhập bằng email `@st.ueh.edu.vn` và OTP mô phỏng miễn phí; hồ sơ, yêu thích, đánh giá có duyệt, checklist, yêu cầu liên hệ và thông báo theo tài khoản. Chủ trọ/quản trị dùng đăng nhập ChatGPT riêng.
 - Chủ trọ quản lý phòng được gán; quản trị quản lý phòng, ảnh, tài khoản, xác thực, đánh giá và phản hồi liên hệ.
 - SQL/D1 lưu dữ liệu, R2 lưu ảnh/video tải lên; kiểm tra quyền phía server, truy vấn có tham số và kiểm tra dữ liệu bằng Zod.
 
@@ -38,6 +38,7 @@ npm ci --include=dev --include=optional
 Copy-Item .dev.vars.example .dev.vars
 npm run build
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_absent_lord_tyger.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0001_uneven_lyja.sql
 npm run dev
 ```
 
@@ -51,7 +52,17 @@ node 'C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js' run dev
 
 Mở `/signin-with-chatgpt?return_to=/account` để dùng tài khoản local `seedy@sites.test`. Với `.dev.vars` như trên, tài khoản này có quyền quản trị. Auth mô phỏng chỉ chạy loopback trong dev; build production không có mock auth. Các header danh tính do nền tảng Sites cung cấp được dùng để nhận diện người dùng.
 
-Ở production, cấu hình biến runtime `ADMIN_EMAIL` trong Sites cho email chủ sở hữu trước lần đăng nhập đầu tiên. Không đưa email cấu hình hay token vào mã nguồn. Người dùng khác mặc định là sinh viên; quản trị có thể cấp vai trò chủ trọ/quản trị trong `/manage`. Tài khoản xuất hiện sau lần đăng nhập đầu tiên. Khi sửa phòng, quản trị gán tài khoản quản lý phòng để chủ trọ đó nhận yêu cầu và có quyền chỉnh sửa.
+Ở production, cấu hình biến runtime `ADMIN_EMAIL` trong Sites cho email chủ sở hữu trước lần đăng nhập đầu tiên. Không đưa email cấu hình hay token vào mã nguồn. Tài khoản ChatGPT chưa được cấp vai trò quản lý không được dùng làm phiên sinh viên; quản trị có thể cấp vai trò chủ trọ/quản trị cho tài khoản ChatGPT trong `/manage`. Khi sửa phòng, quản trị gán tài khoản quản lý phòng để chủ trọ đó nhận yêu cầu và có quyền chỉnh sửa. Tài khoản OTP demo luôn chỉ có quyền sinh viên và bị backend chặn cấp quyền quản lý.
+
+## Đăng ký / đăng nhập OTP mô phỏng
+
+Mở `/account`, chọn **Đăng ký**, nhập tên mẫu và email dạng `312demo@st.ueh.edu.vn`. Nhấn **Nhận mã OTP mô phỏng**, lấy mã từ **Hộp thư demo** trên trang và nhập để tạo tài khoản. Các lần sau chọn **Đăng nhập** với cùng email và lấy mã mới. Không cần mật khẩu, Resend, API key, tên miền hoặc dịch vụ email trả phí.
+
+Không có email thật được gửi. Email chỉ được kiểm tra đúng định dạng/tên miền, không xác minh quyền sở hữu email hay tư cách sinh viên thật. Vì mã hiển thị trên trang, bất kỳ người trải nghiệm nào cũng có thể đăng nhập tài khoản demo của một email đã biết: chỉ dùng dữ liệu mẫu, không nhập thông tin riêng tư. Tài khoản demo tách khỏi danh tính ChatGPT và không thể đăng nhập hay nâng quyền thành chủ trọ/quản trị bằng OTP.
+
+Backend lưu mã dạng băm, chỉ cho dùng một lần trong 5 phút, chờ 60 giây giữa các lần gửi, khóa mã sau 5 lần nhập sai. Gửi lại sẽ thay thế mã cũ. Phiên demo lưu ở D1 và cookie HttpOnly/SameSite=Lax (Secure trên HTTPS), hết hạn sau 7 ngày hoặc bị thu hồi khi đăng xuất. Hộp thư demo chỉ giữ mã của lượt thao tác hiện tại trong bộ nhớ trang; tải lại trước khi xác minh cần yêu cầu mã mới sau thời gian chờ.
+
+API: `POST /api/demo-auth/request-otp` nhận `{email,purpose:"register"|"login",name?}`; `POST /api/demo-auth/verify-otp` nhận `{challenge,code}`; `POST /api/demo-auth/logout` thu hồi phiên. `/api/session` trả `authMode: "demo"` trong hồ sơ của phiên mô phỏng.
 
 ## Kiểm tra
 
