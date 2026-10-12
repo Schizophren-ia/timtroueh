@@ -10,8 +10,8 @@ Cập nhật: 12/10/2026.
 4. Triển khai phạm vi đã duyệt.
 5. Cập nhật kết quả thực hiện và kiểm tra vào file này.
 
-**Trạng thái hiện tại: Frontend và backend đã chạy, các kiểm tra chính đã qua; đang đóng gói demo.**
-Người dùng xác nhận "Duyệt" ngày 12/10/2026. Mã nguồn nằm trong `timtro-ueh/`. Server local chạy tại http://127.0.0.1:5173/. Đã đăng ký Site riêng tư và cấu hình danh tính quản trị; chưa xác nhận xuất bản thành công.
+**Trạng thái hiện tại: Website đã chạy và xuất bản demo riêng tư; đang đưa mã nguồn lên GitHub theo yêu cầu bổ sung.**
+Người dùng xác nhận "Duyệt" ngày 12/10/2026. Mã nguồn nằm trong `timtro-ueh/`. Server local chạy tại http://127.0.0.1:5173/. Sites đã có bản live version 1 tại https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site.
 
 ## Mục tiêu
 
@@ -106,4 +106,13 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Site ID: `appgprj_6acbc3cb8f808191ad1bff0a69cc8443`; giữ quyền riêng tư.
 - Biến runtime quản trị đã cấu hình qua Sites (không lưu thông tin nhạy cảm trong mã nguồn).
 - Tải Git portable bị chậm và timeout. Đã tìm thấy Git có sẵn trong GitHub Desktop để tiếp tục đồng bộ nguồn, tránh tải lại.
-- URL dự kiến của Sites chưa được coi là URL đã triển khai. Chỉ ghi nhận demo online hoàn tất khi Sites trả kết quả triển khai thành công.
+- Đã đồng bộ nguồn Sites ở commit `4e69c225047906a6bc8502a068f498f2dfb4cf80` và xác minh lại bằng source helper.
+- Build đã qua kiểm tra. Packager Bash không có trên Windows; đã dùng cùng helper chuẩn bị artifact của Sites với tar Windows, giữ manifest và migration. Archive đã được kiểm tra cấu trúc, dung lượng 9.067.892 byte.
+- `get_site` xác nhận Site active, live version 1 và URL https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site.
+
+### Yêu cầu GitHub bổ sung
+
+- Người dùng yêu cầu đưa mã nguồn lên repo `timtroueh` và xác nhận tạo repo riêng tư trong tài khoản `Schizophren-ia`.
+- GitHub connector đang kết nối tài khoản khác; dùng phiên GitHub có sẵn trên máy cho đúng tài khoản đã chọn. Token chỉ dùng trong bộ nhớ, không lưu vào nguồn hoặc log.
+- Đã chuẩn bị ZIP mã nguồn sạch trong `timtro-ueh/outputs/timtroueh-source.zip`.
+- Đang tạo repo và đẩy nguồn; chưa ghi nhận hoàn tất trước khi xác minh commit trên GitHub.
