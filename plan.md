@@ -175,4 +175,13 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Đã thêm logo UEH nguyên bản từ trang hỗ trợ UEH, bảng màu xanh nhạt/xanh ngọc, font Montserrat, trang chủ dành cho tân sinh viên, thẻ phòng có tổng chi phí, cẩm nang và checklist xem trọ.
 - Mobile: điều hướng dưới 5 mục, bộ lọc thu gọn, ưu tiên bảng phí/liên hệ ngay sau ảnh. Cập nhật đồng bộ trang tài khoản, OTP và các trang phụ.
 - Phát hiện và sửa lỗi bộ lọc bị reset khi chuyển trang: lưu cơ sở/ngân sách/loại phòng trong query tìm kiếm; link tìm nhanh cơ sở Nguyễn Văn Linh đã kiểm tra đúng kết quả.
-- Đã kiểm tra 36 lượt ở 375/768/1024/1440 px, landscape, reduced motion, logo, bàn phím, bộ lọc, checklist và tùy chỉnh chi phí. Không tràn ngang hoặc lỗi trình duyệt. TypeScript và build Vinext thành công; 7/7 kiểm thử backend qua. Kiểm thử Chrome OTP đăng ký/đăng nhập/đăng xuất và hồi quy tìm phòng, đánh giá, liên hệ, phản hồi quản trị đều qua. Đang đồng bộ GitHub và xuất bản.
+- Đã kiểm tra 36 lượt ở 375/768/1024/1440 px, landscape, reduced motion, logo, bàn phím, bộ lọc, checklist và tùy chỉnh chi phí. Không tràn ngang hoặc lỗi trình duyệt. TypeScript và build Vinext thành công; 7/7 kiểm thử backend qua. Kiểm thử Chrome OTP đăng ký/đăng nhập/đăng xuất và hồi quy tìm phòng, đánh giá, liên hệ, phản hồi quản trị đều qua. Đã đồng bộ GitHub và xuất bản thành công.
+
+#### Kết quả xuất bản giao diện mới
+
+- Commit giao diện: `a023f3abc14d011faa5060d28826cced5e680035`.
+- GitHub Actions https://github.com/Schizophren-ia/timtroueh/actions/runs/38350526835: hoàn tất thành công.
+- Sites version 3; deployment `appgdep_6acdbf235f488191a673bb0b78f3f033` trạng thái `succeeded`. Website tiếp tục public tại https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site.
+- Artifact đóng gói bằng helper chuẩn và tar Windows vì không có Bash; đã xác minh nguồn trên Sites khớp commit build.
+- Kiểm tra Chrome trên demo public qua: logo tải đúng, trang chủ mới, tìm theo cơ sở Nguyễn Văn Linh và giữ bộ lọc sau reload; mobile hiển thị phí trước tiện nghi; trang OTP có Hộp thư demo. Không có lỗi trình duyệt.
+- Hoàn tất. Preview local đã dừng; kết quả và ảnh kiểm tra lưu trong outputs (không commit).
