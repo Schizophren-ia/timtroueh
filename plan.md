@@ -166,3 +166,13 @@ Xây dựng website mô phỏng tìm trọ cho sinh viên có frontend và backe
 - Kiểm thử hồi quy trình duyệt local: tìm trọ, quản trị ChatGPT, liên hệ và phản hồi đều qua; không có lỗi trình duyệt.
 - Kiểm thử Chrome trên demo public: toàn bộ đăng ký/đăng nhập lại, OTP sai, cooldown, cookie phiên, yêu thích và đăng xuất đều qua; không đăng nhập ChatGPT, không có lỗi trình duyệt. Không gửi email thật và không cấu hình dịch vụ email trả phí.
 - Hoàn tất; đã dừng preview local sau kiểm thử.
+
+
+### Làm mới giao diện tân sinh viên UEH — 13/10/2026
+
+- Người dùng duyệt phương án UI/UX: màu giống Nhà trọ UEH, dùng logo UEH thay ngôi nhà, bỏ dòng thông báo học tập tại chân trang. Giữ Hộp thư demo cho OTP miễn phí.
+- Đã đọc UI UX Pro Max (SKILL.md, quick-reference và pro-rules), áp dụng trực tiếp hướng dẫn; máy thiếu Python chạy được nên không chạy bộ tìm kiếm/gợi ý của skill. Không cài phần mềm hay dịch vụ trả phí.
+- Đã thêm logo UEH nguyên bản từ trang hỗ trợ UEH, bảng màu xanh nhạt/xanh ngọc, font Montserrat, trang chủ dành cho tân sinh viên, thẻ phòng có tổng chi phí, cẩm nang và checklist xem trọ.
+- Mobile: điều hướng dưới 5 mục, bộ lọc thu gọn, ưu tiên bảng phí/liên hệ ngay sau ảnh. Cập nhật đồng bộ trang tài khoản, OTP và các trang phụ.
+- Phát hiện và sửa lỗi bộ lọc bị reset khi chuyển trang: lưu cơ sở/ngân sách/loại phòng trong query tìm kiếm; link tìm nhanh cơ sở Nguyễn Văn Linh đã kiểm tra đúng kết quả.
+- Đã kiểm tra 36 lượt ở 375/768/1024/1440 px, landscape, reduced motion, logo, bàn phím, bộ lọc, checklist và tùy chỉnh chi phí. Không tràn ngang hoặc lỗi trình duyệt. TypeScript và build Vinext thành công; 7/7 kiểm thử backend qua. Kiểm thử Chrome OTP đăng ký/đăng nhập/đăng xuất và hồi quy tìm phòng, đánh giá, liên hệ, phản hồi quản trị đều qua. Đang đồng bộ GitHub và xuất bản.

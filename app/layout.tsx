@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./student-theme.css";
 
 export const metadata: Metadata = {
-  title: "TìmTrọ UEH · Tìm một nơi để gọi là nhà",
-  description: "Tìm phòng trọ sinh viên theo campus, ngân sách và khoảng cách. Chi phí minh bạch, đánh giá và thông tin xác thực trong bản mô phỏng TìmTrọ UEH.",
+  title: "Nhà trọ UEH · Gần trường, gần bạn",
+  description: "Tìm phòng trọ cho sinh viên UEH theo cơ sở học, ngân sách và khoảng cách. Xem chi phí, tiện nghi và cẩm nang thuê trọ để an tâm bắt đầu hành trình đại học.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/assets/ueh-logo.png",
+    shortcut: "/assets/ueh-logo.png",
   },
 };
 

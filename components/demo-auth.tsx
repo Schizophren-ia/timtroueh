@@ -63,7 +63,7 @@ export function DemoAuth() {
       </div>
       <aside className="panel demo-mailbox" aria-label="Hộp thư demo">
         <div className="demo-mailbox-heading"><Mail size={24} /><div><h2>Hộp thư demo</h2><span>Chỉ hiển thị mã của lượt thao tác này</span></div></div>
-        {mailbox ? <div className="demo-letter" aria-live="polite"><span className="badge blue">EMAIL MÔ PHỎNG</span><p><strong>Đến:</strong> <span className="auth-email">{mailbox.email}</span></p><h3>Mã xác minh TìmTrọ UEH</h3><p>Nhập mã bên dưới vào ô OTP để tiếp tục.</p><strong className="demo-otp" data-testid="demo-otp">{mailbox.demoCode}</strong><p>Mã dùng một lần, có hiệu lực trong 5 phút. Mã mới sẽ thay thế mã cũ.</p><small>Đây là hộp thư mô phỏng trên website; email thật của bạn không nhận thư.</small></div>
+        {mailbox ? <div className="demo-letter" aria-live="polite"><span className="badge blue">EMAIL MÔ PHỎNG</span><p><strong>Đến:</strong> <span className="auth-email">{mailbox.email}</span></p><h3>Mã xác minh Nhà trọ UEH</h3><p>Nhập mã bên dưới vào ô OTP để tiếp tục.</p><strong className="demo-otp" data-testid="demo-otp">{mailbox.demoCode}</strong><p>Mã dùng một lần, có hiệu lực trong 5 phút. Mã mới sẽ thay thế mã cũ.</p><small>Đây là hộp thư mô phỏng trên website; email thật của bạn không nhận thư.</small></div>
           : <div className="demo-mailbox-empty"><GraduationCap size={48} /><h3>Mã của bạn sẽ xuất hiện ở đây</h3><p>Chọn Đăng ký nếu chưa có tài khoản, nhập email UEH rồi bấm nhận mã.</p><span className="badge blue">Không cần dịch vụ gửi email</span></div>}
       </aside>
     </div>

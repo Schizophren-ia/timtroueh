@@ -119,3 +119,13 @@ Workflow `.github/workflows/nextjs.yml` dùng Node 24, `npm ci`, kiểm tra Type
 GitHub Pages chỉ xuất bản trang chuyển hướng trong `pages/index.html` tới demo public https://timtro-ueh-sinhvien.abuzzbetta32.chatgpt.site/. Backend và database vẫn chạy tại demo Sites. Không dùng mẫu `npx next build` hoặc chèn `static_site_generator: next` vào bước kiểm tra/build ứng dụng này.
 
 Workflow chạy khi thay đổi mã nguồn trên `main` hoặc bấm **Run workflow**. Các commit chỉ cập nhật `plan.md`/README không kích hoạt lại quá trình build. Khi cần xem lỗi hoặc tải artifact, mở tab **Actions** của repo.
+
+## Giao diện tân sinh viên UEH — 13/10/2026
+
+- Logo UEH lấy nguyên bản từ https://hotro.ueh.edu.vn/images/logo-ueh.png?t=12321; giữ màu/tỷ lệ, đặt trên nền xanh cổ vịt.
+- Màu theo trang https://nhatroueh.com/thong-tin-tro/: xanh nhạt `#80A6F2`, xanh ngọc `#7EDDF2`, nền `#F8F5F4`. Montserrat cho tiêu đề và Be Vietnam Pro cho nội dung. Chi tiết trong `design-system/student-housing.md`.
+- Trang chủ có tìm nhanh theo cơ sở/ngân sách/loại phòng; thẻ phòng hiển thị tổng chi phí dự kiến. Bộ lọc được giữ trong query của `/search` để tải lại/chia sẻ đường dẫn.
+- Mobile có điều hướng dưới, bộ lọc thu gọn, bảng phí ngay sau ảnh; chi tiết có checklist xem trọ. Giữ OTP mô phỏng và backend hiện có.
+- Bỏ dòng thông báo học tập tại chân trang theo yêu cầu; phần OTP và trạng thái dữ liệu mẫu vẫn ghi đúng chức năng.
+- Hướng dẫn UI/UX tham khảo từ https://github.com/nextlevelbuilder/ui-ux-pro-max-skill; áp dụng trực tiếp tài liệu vì không có Python chạy được, không cài thêm phần mềm.
+- Chạy kiểm tra giao diện bằng `node scripts/test-student-design.mjs` khi preview local đang chạy.
